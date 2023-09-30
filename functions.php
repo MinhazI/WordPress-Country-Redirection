@@ -18,18 +18,18 @@ function check_country_selection()
         return;
     }
 
-    if (isset($_COOKIE['selectedCountry'])) {
-        $selectedCountry = $_COOKIE['selectedCountry'];
+    if (isset($_COOKIE['country'])) {
+        $country = $_COOKIE['country'];
 
         // Check if the URL starts with "https://test.frokme.winauthority.net" (excluding "/uk")
         if (strpos($currentURL, 'https://test.frokme.winauthority.net') === 0 && strpos($currentURL, 'https://test.frokme.winauthority.net/uk') !== 0) {
-            if ($selectedCountry === 'lk') {
+            if ($country === 'lk') {
                 return;
             } else {
-                if (strpos($_SERVER['REQUEST_URI'], '/uk') === 0 && $selectedCountry == 'lk') {
-                    wp_safe_redirect('https://test.frokme.winauthority.net/', 302);
+                if (strpos($_SERVER['REQUEST_URI'], '/uk') === 0 && $country == 'lk') {
+                    wp_safe_redirect('https://test.frokme.winauthority.net/' . $_SERVER['REQUEST_URI'], 302);
                     exit;
-                } else if ($selectedCountry === 'in') {
+                } else if ($country === 'in') {
                     wp_safe_redirect('https://test.frokme.winauthority.net/uk' . $_SERVER['REQUEST_URI'], 302);
                     exit;
                 } else {
@@ -37,31 +37,30 @@ function check_country_selection()
                     exit;
                 }
             }
-        } elseif (strpos($currentURL, 'https://test.frokme.winauthority.net/uk') === 0 && $selectedCountry == 'in') {
+        } elseif (strpos($currentURL, 'https://test.frokme.winauthority.net/uk') === 0 && $country == 'in') {
             // User is on the "uk" site, and the cookie matches, so return
             return;
         } else {
-            if ($_COOKIE['selectedCountry'] == 'lk') {
+            if ($country == 'lk') {
                 if (strpos($_SERVER['REQUEST_URI'], '/uk') === 0) {
-                    wp_safe_redirect('https://test.frokme.winauthority.net/', 302);
+                    wp_safe_redirect('https://test.frokme.winauthority.net/' . $_SERVER['REQUEST_URI'], 302);
                     exit;
                 } else {
                     wp_safe_redirect('https://test.frokme.winauthority.net' . $_SERVER['REQUEST_URI'], 302);
                     exit;
                 }
-            } elseif ($_COOKIE['selectedCountry'] == 'in') {
+            } elseif ($country == 'in') {
                 wp_safe_redirect('https://test.frokme.winauthority.net/uk' . $_SERVER['REQUEST_URI'], 302);
+                exit;
             }
         }
     } else {
         wp_safe_redirect(site_url() . '/country-selection?redirect=' . $_SERVER['REQUEST_URI'], 302);
-        exit;
     }
 }
 
 // Hook into the template redirect action to check for country selection
 add_action('template_redirect', 'check_country_selection');
-
 
 add_action('wp_enqueue_scripts', 'basel_child_enqueue_styles', 1000);
 
