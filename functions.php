@@ -9,6 +9,7 @@ add_action('wp_enqueue_scripts', 'country_selection_script');
 /**
  * Check if the user needs to select a country.
  */
+
 function check_country_selection()
 {
     $currentURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -27,13 +28,13 @@ function check_country_selection()
                 return;
             } else {
                 if (strpos($_SERVER['REQUEST_URI'], '/uk') === 0 && $country == 'lk') {
-                    wp_safe_redirect('https://test.frokme.winauthority.net/' . $_SERVER['REQUEST_URI'], 302);
+                    wp_safe_redirect('https://test.frokme.winauthority.net/' . ltrim($_SERVER['REQUEST_URI'], '/uk'));
                     exit;
                 } else if ($country === 'in') {
-                    wp_safe_redirect('https://test.frokme.winauthority.net/uk' . $_SERVER['REQUEST_URI'], 302);
+                    wp_safe_redirect('https://test.frokme.winauthority.net/uk' . $_SERVER['REQUEST_URI']);
                     exit;
                 } else {
-                    wp_safe_redirect('https://test.frokme.winauthority.net' . $_SERVER['REQUEST_URI'], 302);
+                    wp_safe_redirect('https://test.frokme.winauthority.net' . $_SERVER['REQUEST_URI']);
                     exit;
                 }
             }
@@ -41,38 +42,23 @@ function check_country_selection()
             // User is on the "uk" site, and the cookie matches, so return
             return;
         } else {
-            if ($country == 'lk') {
+            if ($country === 'lk') {
                 if (strpos($_SERVER['REQUEST_URI'], '/uk') === 0) {
-                    wp_safe_redirect('https://test.frokme.winauthority.net/' . $_SERVER['REQUEST_URI'], 302);
+                    wp_safe_redirect('https://test.frokme.winauthority.net/' . ltrim($_SERVER['REQUEST_URI'], '/uk'));
                     exit;
                 } else {
-                    wp_safe_redirect('https://test.frokme.winauthority.net' . $_SERVER['REQUEST_URI'], 302);
+                    wp_safe_redirect('https://test.frokme.winauthority.net' . $_SERVER['REQUEST_URI']);
                     exit;
                 }
             } elseif ($country == 'in') {
-                wp_safe_redirect('https://test.frokme.winauthority.net/uk' . $_SERVER['REQUEST_URI'], 302);
+                wp_safe_redirect('https://test.frokme.winauthority.net/uk' . $_SERVER['REQUEST_URI']);
                 exit;
             }
         }
     } else {
-        wp_safe_redirect(site_url() . '/country-selection?redirect=' . $_SERVER['REQUEST_URI'], 302);
+        wp_safe_redirect(site_url() . '/country-selection?redirect=' . $_SERVER['REQUEST_URI']);
     }
 }
 
 // Hook into the template redirect action to check for country selection
 add_action('template_redirect', 'check_country_selection');
-
-add_action('wp_enqueue_scripts', 'basel_child_enqueue_styles', 1000);
-
-function basel_child_enqueue_styles()
-{
-    $version = basel_get_theme_info('Version');
-
-    if (basel_get_opt('minified_css')) {
-        wp_enqueue_style('basel-style', get_template_directory_uri() . '/style.min.css', array('bootstrap'), $version);
-    } else {
-        wp_enqueue_style('basel-style', get_template_directory_uri() . '/style.css', array('bootstrap'), $version);
-    }
-
-    wp_enqueue_style('child-style', get_stylesheet_directory_uri() . '/style.css', array('bootstrap'), $version);
-}

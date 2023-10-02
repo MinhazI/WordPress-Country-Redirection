@@ -12,6 +12,10 @@ document.addEventListener('click', function (event) {
 
         // Access the value of the "redirect" parameter
         var redirectValue = urlParams.get('redirect');
-        window.location.href = country === 'in' ? 'https://test.frokme.winauthority.net/uk/' + redirectValue.replace('/uk', '') : 'https://test.frokme.winauthority.net/' + redirectValue.replace('/uk', '');
+        if(redirectValue && redirectValue.length > 0){
+            window.location.href = country === 'in' ? 'https://test.frokme.winauthority.net/uk/' + redirectValue.replace('/uk', '') : 'https://test.frokme.winauthority.net/' + redirectValue.replace('/uk', '');
+        } else {
+            window.location.href = country === 'in' ? 'https://test.frokme.winauthority.net/uk/' : 'https://test.frokme.winauthority.net/';
+        }
     }
 });
